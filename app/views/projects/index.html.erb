@@ -1,0 +1,36 @@
+<h1>Projects</h1>
+<%= link_to 'New Project', new_project_path %>
+<ul>
+  <% @projects.each do |project| %>
+    <li><%= link_to project&.name, project_path(project) %> - Status: <%= project&.status %></li>
+  <% end %>
+</ul>
+
+# app/views/projects/show.html.erb
+<h1><%= @project.name %></h1>
+<p>Status: <%= @project.status %></p>
+<%= form_with model: [@project, Comment.new], local: true do |form| %>
+  <p>
+    <%= form.label :content, "Add Comment:" %>
+    <%= form.text_area :content %>
+  </p>
+  <%= form.submit "Post Comment" %>
+<% end %>
+
+<h2>Comments</h2>
+<ul>
+  <% @comments.each do |comment| %>
+    <li><%= comment.user.email %>: <%= comment.content %></li>
+  <% end %>
+</ul>
+
+<% if @project.user == current_user %>
+  <h2>Change Status</h2>
+  <%= form_with model: [@project, StatusChange.new], local: true do |form| %>
+    <p>
+      <%= form.label :status, "Update Status:" %>
+      <%= form.select :status, ["Open", "In Progress", "Completed"] %>
+    </p>
+    <%= form.submit "Update Status" %>
+  <% end %>
+<% end %>
